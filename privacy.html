@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tab Dump Privacy Policy</title>
+    <meta name="description" content="Privacy policy for the Tab Dump Chrome extension." />
+    <style>
+      :root { color: #20283b; background: #f7f8fb; font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      body { margin: 0; }
+      main { width: min(760px, calc(100% - 40px)); margin: 0 auto; padding: 56px 0 80px; }
+      article { margin-top: 34px; padding: 34px; border: 1px solid #e1e3ea; border-radius: 16px; background: #fff; }
+      h1 { margin: 0; font-size: 34px; letter-spacing: -0.025em; }
+      h2 { margin: 0 0 20px; font-size: 23px; }
+      h3 { margin: 28px 0 8px; font-size: 16px; }
+      p, li { color: #596174; font-size: 15px; line-height: 1.7; }
+      a { color: #4653c0; }
+      .effective { margin-top: 8px; color: #7d8393; font-size: 14px; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Tab Dump Privacy Policy</h1>
+      <p class="effective">Effective date / 発効日: September 28, 2026</p>
+
+      <article lang="en">
+        <h2>English</h2>
+        <p>Tab Dump is a Chrome extension that saves the restorable tabs in the user's current Chrome window so the user can restore them later.</p>
+        <h3>Data handled</h3>
+        <p>Only when the user explicitly creates a dump, Tab Dump handles tab URLs, titles, order, pinned state, user-entered dump names, and dump creation timestamps.</p>
+        <h3>Use, storage, and transmission</h3>
+        <p>This data is used only to display saved dumps and reopen their tabs at the user's request. All data is stored locally using <code>chrome.storage.local</code>. It is not transmitted to the developer or any external server. Tab Dump uses no analytics, advertising, tracking, remote code, or third-party services.</p>
+        <h3>Sharing and sale</h3>
+        <p>Tab Dump does not share, sell, or allow human access to user data.</p>
+        <h3>Retention and deletion</h3>
+        <p>Data remains on the user's device until the user deletes an individual dump or uninstalls the extension. Uninstalling removes extension storage according to Chrome's behavior.</p>
+        <h3>Permissions</h3>
+        <ul>
+          <li><code>tabs</code>: Reads tab metadata in the current window, closes tabs after a verified save, and reopens saved tabs at the user's request.</li>
+          <li><code>storage</code>: Stores dumps locally in the browser.</li>
+        </ul>
+        <p>Tab Dump requests no host permissions and does not read webpage content.</p>
+        <h3>Chrome Web Store Limited Use</h3>
+        <p>The use of information received from Chrome APIs adheres to the Chrome Web Store User Data Policy, including the Limited Use requirements.</p>
+        <h3>Changes and contact</h3>
+        <p>Policy changes will be published at this URL with a revised effective date. Questions may be sent to <a href="mailto:kzmotk+dev@gmail.com">kzmotk+dev@gmail.com</a>.</p>
+      </article>
+
+      <article lang="ja">
+        <h2>日本語</h2>
+        <p>Tab Dumpは、現在のChromeウィンドウにある復元可能なタブを保存し、あとでユーザーが復元できるようにするChrome拡張です。</p>
+        <h3>取り扱うデータ</h3>
+        <p>ユーザーが明示的にDumpを実行した場合に限り、タブのURL、タイトル、順序、ピン留め状態、ユーザーが入力したDump名、Dumpの作成日時を取り扱います。</p>
+        <h3>利用目的・保存・送信</h3>
+        <p>データは保存済みDumpの表示と、ユーザー操作によるタブの復元にのみ使用します。すべてのデータは<code>chrome.storage.local</code>を使用して端末内に保存され、開発者または外部サーバーへ送信されません。アクセス解析、広告、トラッキング、リモートコード、第三者サービスは使用しません。</p>
+        <h3>共有と販売</h3>
+        <p>ユーザーデータを第三者と共有または販売せず、人が閲覧できる状態にもなりません。</p>
+        <h3>保持と削除</h3>
+        <p>保存データは、ユーザーが個別のDumpを削除するか拡張機能をアンインストールするまで端末内に保持されます。アンインストール時にはChromeの仕様に従って拡張機能ストレージも削除されます。</p>
+        <h3>権限</h3>
+        <ul>
+          <li><code>tabs</code>: 現在のウィンドウのタブ情報取得、保存検証後のタブ削除、およびユーザー操作による復元に使用します。</li>
+          <li><code>storage</code>: Dumpをブラウザ内へローカル保存するために使用します。</li>
+        </ul>
+        <p>ホスト権限は要求せず、Webページの本文も読み取りません。</p>
+        <h3>Chrome Web Store Limited Use</h3>
+        <p>Chrome APIから取得した情報の利用は、Limited Use要件を含むChrome Web Store User Data Policyに準拠します。</p>
+        <h3>変更とお問い合わせ</h3>
+        <p>本ポリシーを変更する場合は、発効日を更新して同じURLに掲載します。お問い合わせ先は<a href="mailto:kzmotk+dev@gmail.com">kzmotk+dev@gmail.com</a>です。</p>
+      </article>
+    </main>
+  </body>
+</html>
