@@ -3,26 +3,436 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Tab Parcel</title>
-    <meta name="description" content="Pack the tabs in your current Chrome window and restore them later." />
+    <meta name="theme-color" content="#f6f4ee" />
+    <title>Tab Parcel — Pack now. Restore later.</title>
+    <meta
+      name="description"
+      content="Clear a crowded Chrome window in one move. Tab Parcel packs your tabs locally and restores them whenever you need them."
+    />
+    <link rel="icon" href="icon-128.png" />
     <style>
-      :root { color: #172033; background: #f7f8fb; font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
-      body { margin: 0; }
-      main { width: min(680px, calc(100% - 40px)); margin: 0 auto; padding: 72px 0; }
-      img { width: 96px; height: 96px; border-radius: 22px; }
-      h1 { margin: 22px 0 8px; font-size: 38px; letter-spacing: -0.03em; }
-      p { color: #5e6679; font-size: 17px; line-height: 1.7; }
-      a { color: #4653c0; font-weight: 650; }
-      .tagline { max-width: 560px; }
+      :root {
+        color: #18203d;
+        background: #f6f4ee;
+        font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font-synthesis: none;
+        --ink: #18203d;
+        --muted: #68708a;
+        --paper: #f6f4ee;
+        --white: #fffefb;
+        --line: #dcd9ce;
+        --brand: #7479f6;
+        --brand-dark: #343b81;
+        --brand-soft: #e6e7ff;
+        --mint: #c9f3df;
+        --shadow: 0 24px 70px rgba(32, 39, 78, 0.14);
+      }
+
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body { margin: 0; overflow-x: hidden; }
+      a { color: inherit; }
+      button, a { -webkit-tap-highlight-color: transparent; }
+      img { display: block; max-width: 100%; }
+
+      .shell {
+        width: min(1120px, calc(100% - 40px));
+        margin: 0 auto;
+      }
+
+      .nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 24px 0;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 11px;
+        color: var(--ink);
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        text-decoration: none;
+      }
+
+      .brand img { width: 34px; height: 34px; }
+      .nav-links { display: flex; align-items: center; gap: 24px; }
+      .nav-links a { color: var(--muted); font-size: 14px; font-weight: 650; text-decoration: none; }
+      .nav-links a:hover { color: var(--ink); }
+
+      .button {
+        display: inline-flex;
+        min-height: 48px;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        padding: 0 20px;
+        border: 1px solid transparent;
+        border-radius: 14px;
+        background: var(--brand);
+        box-shadow: 0 10px 26px rgba(76, 82, 192, 0.24);
+        color: white;
+        font-size: 15px;
+        font-weight: 750;
+        text-decoration: none;
+        transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+      }
+
+      .button:hover { transform: translateY(-2px); background: #666bf0; box-shadow: 0 14px 34px rgba(76, 82, 192, 0.3); }
+      .button.secondary { border-color: var(--line); background: rgba(255, 254, 251, 0.72); box-shadow: none; color: var(--ink); }
+      .button.secondary:hover { background: var(--white); box-shadow: 0 9px 22px rgba(32, 39, 78, 0.09); }
+      .button.small { min-height: 40px; padding: 0 15px; border-radius: 12px; font-size: 14px; box-shadow: none; }
+
+      .hero {
+        position: relative;
+        display: grid;
+        grid-template-columns: 1.02fr 0.98fr;
+        gap: 62px;
+        align-items: center;
+        min-height: 680px;
+        padding: 70px 0 104px;
+      }
+
+      .hero::before {
+        position: absolute;
+        z-index: -1;
+        top: 3%;
+        right: -19%;
+        width: 610px;
+        height: 610px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(116, 121, 246, 0.2), rgba(116, 121, 246, 0) 70%);
+        content: "";
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0 0 22px;
+        padding: 7px 11px;
+        border: 1px solid #d7d8f6;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.58);
+        color: var(--brand-dark);
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .eyebrow::before { width: 7px; height: 7px; border-radius: 50%; background: var(--brand); content: ""; }
+
+      h1 {
+        max-width: 650px;
+        margin: 0;
+        font-size: clamp(48px, 6vw, 76px);
+        font-weight: 850;
+        letter-spacing: -0.065em;
+        line-height: 0.97;
+      }
+
+      h1 span { color: var(--brand); }
+      .hero-copy > p { max-width: 590px; margin: 25px 0 0; color: var(--muted); font-size: 19px; line-height: 1.65; }
+      .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+      .hero-note { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 24px; color: var(--muted); font-size: 13px; }
+      .hero-note span { display: inline-flex; align-items: center; gap: 7px; }
+      .hero-note span::before { color: #26835c; content: "✓"; font-weight: 900; }
+
+      .browser {
+        overflow: hidden;
+        border: 1px solid #ccd0dc;
+        border-radius: 22px;
+        background: #e9ecf3;
+        box-shadow: var(--shadow);
+        transform: rotate(1.2deg);
+      }
+
+      .browser-bar { display: flex; gap: 6px; align-items: flex-end; min-height: 56px; padding: 14px 14px 0; }
+      .browser-dot { align-self: flex-start; width: 9px; height: 9px; border-radius: 50%; background: #b8bdca; }
+      .browser-dot:nth-child(1) { background: #ff877d; }
+      .browser-dot:nth-child(2) { background: #f8cc66; }
+      .browser-dot:nth-child(3) { margin-right: 8px; background: #77d497; }
+      .browser-tab { width: 80px; height: 31px; border-radius: 9px 9px 0 0; background: #d7dbe6; }
+      .browser-tab.active { background: var(--white); }
+      .browser-tab.short { width: 48px; }
+
+      .browser-body {
+        position: relative;
+        min-height: 440px;
+        padding: 42px 24px 28px;
+        background:
+          linear-gradient(rgba(255,255,255,.74), rgba(255,255,255,.74)),
+          radial-gradient(circle at 22% 27%, var(--brand-soft) 0 10%, transparent 10.5%),
+          var(--white);
+      }
+
+      .page-lines { width: 62%; padding-top: 50px; opacity: 0.7; }
+      .page-lines i { display: block; height: 10px; margin: 15px 0; border-radius: 999px; background: #e5e6eb; }
+      .page-lines i:nth-child(1) { width: 55%; height: 24px; background: #d3d6df; }
+      .page-lines i:nth-child(3) { width: 83%; }
+      .page-lines i:nth-child(4) { width: 68%; }
+
+      .popup {
+        position: absolute;
+        top: 26px;
+        right: 26px;
+        width: 302px;
+        padding: 22px;
+        border: 1px solid #d9dbe5;
+        border-radius: 17px;
+        background: var(--white);
+        box-shadow: 0 24px 60px rgba(33, 40, 74, 0.22);
+      }
+
+      .popup-head { display: flex; gap: 11px; align-items: center; margin-bottom: 21px; }
+      .popup-head img { width: 39px; height: 39px; }
+      .popup-head strong { display: block; font-size: 15px; }
+      .popup-head small { color: var(--muted); font-size: 11px; }
+      .popup-count { margin-bottom: 10px; font-size: 19px; font-weight: 800; letter-spacing: -0.02em; }
+      .fake-input { padding: 12px 13px; border: 1px solid #dadce4; border-radius: 10px; color: #9a9fac; font-size: 12px; }
+      .fake-button { margin-top: 9px; padding: 12px; border-radius: 10px; background: var(--brand); color: white; font-size: 13px; font-weight: 800; text-align: center; }
+      .shortcut-hint { display: flex; gap: 5px; align-items: center; justify-content: center; margin-top: 14px; color: var(--muted); font-size: 10px; }
+      kbd { min-width: 24px; padding: 4px 6px; border: 1px solid #d8dae3; border-bottom-width: 2px; border-radius: 6px; background: #f7f7f9; color: var(--ink); font: inherit; font-weight: 750; text-align: center; }
+
+      .strip { border-block: 1px solid var(--line); background: rgba(255, 254, 251, 0.56); }
+      .strip-inner { display: grid; grid-template-columns: repeat(3, 1fr); }
+      .strip-item { padding: 27px 28px; border-right: 1px solid var(--line); }
+      .strip-item:first-child { padding-left: 0; }
+      .strip-item:last-child { border: 0; }
+      .strip-item strong { display: block; margin-bottom: 4px; font-size: 15px; }
+      .strip-item span { color: var(--muted); font-size: 13px; line-height: 1.5; }
+
+      section { padding: 116px 0; }
+      .section-label { margin: 0 0 14px; color: var(--brand); font-size: 12px; font-weight: 850; letter-spacing: 0.11em; text-transform: uppercase; }
+      h2 { max-width: 760px; margin: 0; font-size: clamp(36px, 5vw, 58px); font-weight: 840; letter-spacing: -0.05em; line-height: 1.04; }
+      .section-lead { max-width: 640px; margin: 20px 0 0; color: var(--muted); font-size: 18px; line-height: 1.7; }
+
+      .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 54px; }
+      .step { min-height: 260px; padding: 28px; border: 1px solid var(--line); border-radius: 22px; background: rgba(255, 254, 251, 0.76); }
+      .step-number { display: grid; width: 40px; height: 40px; place-items: center; border-radius: 12px; background: var(--brand-soft); color: var(--brand-dark); font-size: 13px; font-weight: 850; }
+      .step h3 { margin: 60px 0 10px; font-size: 24px; letter-spacing: -0.035em; }
+      .step p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.65; }
+
+      .shortcut {
+        position: relative;
+        overflow: hidden;
+        display: grid;
+        grid-template-columns: 0.88fr 1.12fr;
+        gap: 50px;
+        align-items: center;
+        padding: 56px;
+        border-radius: 30px;
+        background: var(--ink);
+        color: white;
+      }
+
+      .shortcut::after { position: absolute; right: -90px; bottom: -130px; width: 390px; height: 390px; border-radius: 50%; background: rgba(116, 121, 246, 0.28); content: ""; }
+      .shortcut h2 { max-width: 520px; }
+      .shortcut p { max-width: 470px; margin: 20px 0 0; color: #b8bfd6; font-size: 17px; line-height: 1.7; }
+      .key-flow { position: relative; z-index: 1; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: center; }
+      .key-flow kbd { min-width: 74px; padding: 22px 17px; border: 1px solid #5e668b; border-bottom-width: 5px; border-radius: 14px; background: #293253; color: white; font-size: 21px; }
+      .key-flow .arrow { color: #747d9d; font-size: 26px; }
+      .key-flow .enter { border-color: #6d72e8; background: var(--brand); }
+
+      .safety-grid { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 80px; align-items: start; }
+      .promise { padding: 29px; border: 1px solid #b9e3d0; border-radius: 22px; background: var(--mint); }
+      .promise strong { display: block; margin-bottom: 11px; color: #145a3f; font-size: 20px; letter-spacing: -0.025em; }
+      .promise p { margin: 0; color: #2c6b53; font-size: 15px; line-height: 1.7; }
+
+      .safety-flow { position: relative; margin-top: 45px; }
+      .safety-row { display: grid; grid-template-columns: 46px 1fr; gap: 16px; position: relative; padding-bottom: 29px; }
+      .safety-row:not(:last-child)::after { position: absolute; top: 42px; bottom: 3px; left: 22px; width: 1px; background: #cbcde4; content: ""; }
+      .safety-check { display: grid; z-index: 1; width: 46px; height: 46px; place-items: center; border-radius: 14px; background: var(--brand-soft); color: var(--brand-dark); font-weight: 900; }
+      .safety-row strong { display: block; margin: 3px 0 4px; font-size: 17px; }
+      .safety-row span { color: var(--muted); font-size: 14px; line-height: 1.55; }
+
+      .uses { padding-top: 0; }
+      .use-grid { display: grid; grid-template-columns: 1.15fr 0.85fr 0.85fr; gap: 18px; margin-top: 50px; }
+      .use { min-height: 235px; padding: 28px; border: 1px solid var(--line); border-radius: 22px; background: var(--white); }
+      .use:first-child { background: var(--brand-soft); }
+      .use-mark { color: var(--brand); font-size: 28px; font-weight: 900; }
+      .use h3 { margin: 68px 0 8px; font-size: 21px; letter-spacing: -0.025em; }
+      .use p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
+
+      .cta { padding-top: 20px; }
+      .cta-box { padding: 76px 40px; border-radius: 30px; background: var(--brand); color: white; text-align: center; }
+      .cta-box h2 { max-width: 720px; margin-inline: auto; }
+      .cta-box p { max-width: 590px; margin: 19px auto 29px; color: #ececff; font-size: 17px; line-height: 1.65; }
+      .cta-box .button { background: white; box-shadow: none; color: var(--brand-dark); }
+      .cta-box .button:hover { background: #f4f4ff; }
+
+      footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px; padding: 38px 0 48px; color: var(--muted); font-size: 13px; }
+      footer div { display: flex; gap: 20px; }
+      footer a:hover { color: var(--ink); }
+
+      @media (max-width: 880px) {
+        .hero { grid-template-columns: 1fr; min-height: auto; padding-top: 64px; }
+        .hero-copy { text-align: center; }
+        .hero-copy > p, h1 { margin-inline: auto; }
+        .hero-actions, .hero-note { justify-content: center; }
+        .browser { width: min(600px, 100%); margin: 8px auto 0; transform: none; }
+        .steps, .strip-inner { grid-template-columns: 1fr; }
+        .strip-item, .strip-item:first-child { padding: 22px 0; border-right: 0; border-bottom: 1px solid var(--line); }
+        .strip-item:last-child { border-bottom: 0; }
+        .shortcut, .safety-grid { grid-template-columns: 1fr; }
+        .use-grid { grid-template-columns: 1fr 1fr; }
+        .use:first-child { grid-column: span 2; }
+      }
+
+      @media (max-width: 600px) {
+        .shell { width: min(100% - 28px, 1120px); }
+        .nav-links > a:first-child { display: none; }
+        .hero { gap: 42px; padding: 49px 0 72px; }
+        h1 { font-size: 48px; }
+        .hero-copy > p { font-size: 17px; }
+        .browser-body { min-height: 380px; padding: 18px; }
+        .popup { top: 24px; right: 18px; left: 18px; width: auto; }
+        .browser-tab:nth-of-type(n+6) { display: none; }
+        section { padding: 82px 0; }
+        .steps { margin-top: 38px; }
+        .step { min-height: 220px; }
+        .step h3 { margin-top: 38px; }
+        .shortcut { gap: 39px; padding: 38px 24px; }
+        .key-flow { gap: 7px; }
+        .key-flow kbd { min-width: 56px; padding: 17px 11px; font-size: 16px; }
+        .safety-grid { gap: 42px; }
+        .use-grid { grid-template-columns: 1fr; }
+        .use:first-child { grid-column: auto; }
+        .cta-box { padding: 58px 24px; }
+        footer { align-items: flex-start; flex-direction: column; }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html { scroll-behavior: auto; }
+        *, *::before, *::after { transition: none !important; }
+      }
     </style>
   </head>
   <body>
-    <main>
-      <img src="icon-128.png" alt="Tab Parcel icon" />
-      <h1>Tab Parcel</h1>
-      <p class="tagline">Pack every tab in your current Chrome window, clear the clutter, and restore the whole session whenever you need it.</p>
-      <p>All tab data stays locally in your browser. No account, cloud service, analytics, advertising, or external data transmission.</p>
-      <p><a href="privacy.html">Privacy Policy / プライバシーポリシー</a></p>
+    <header class="shell nav">
+      <a class="brand" href="#top" aria-label="Tab Parcel home">
+        <img src="icon-128.png" alt="" />
+        <span>Tab Parcel</span>
+      </a>
+      <nav class="nav-links" aria-label="Primary navigation">
+        <a href="privacy.html">Privacy</a>
+        <a class="button small" href="https://chromewebstore.google.com/detail/tab-parcel/pohjmphoidcblbneaeabbpjhcjjlbhke">Add to Chrome</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <div class="shell hero">
+        <div class="hero-copy">
+          <p class="eyebrow">A clean slate in one move</p>
+          <h1>Your tabs need a parking spot, <span>not a filing system.</span></h1>
+          <p>Pack every tab in your current Chrome window, get back to a blank workspace, and restore the whole set whenever you need it.</p>
+          <div class="hero-actions">
+            <a class="button" href="https://chromewebstore.google.com/detail/tab-parcel/pohjmphoidcblbneaeabbpjhcjjlbhke">Add to Chrome — it’s free <span aria-hidden="true">↗</span></a>
+            <a class="button secondary" href="#how-it-works">See how it works</a>
+          </div>
+          <div class="hero-note" aria-label="Product highlights">
+            <span>No account</span>
+            <span>No cloud</span>
+            <span>No tracking</span>
+          </div>
+        </div>
+
+        <div class="browser" aria-label="Illustration of Tab Parcel packing 24 browser tabs">
+          <div class="browser-bar" aria-hidden="true">
+            <i class="browser-dot"></i><i class="browser-dot"></i><i class="browser-dot"></i>
+            <i class="browser-tab active"></i><i class="browser-tab"></i><i class="browser-tab"></i><i class="browser-tab short"></i>
+          </div>
+          <div class="browser-body">
+            <div class="page-lines" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+            <div class="popup">
+              <div class="popup-head">
+                <img src="icon-128.png" alt="" />
+                <div><strong>Tab Parcel</strong><small>Pack now. Restore later.</small></div>
+              </div>
+              <div class="popup-count">24 tabs open</div>
+              <div class="fake-input">Name this parcel (optional)</div>
+              <div class="fake-button">Pack 24 tabs</div>
+              <div class="shortcut-hint"><kbd>⌘</kbd><kbd>⇧</kbd><kbd>Y</kbd><span>then</span><kbd>Enter</kbd></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="strip">
+        <div class="shell strip-inner">
+          <div class="strip-item"><strong>Current window only</strong><span>Switch context without touching your other Chrome windows.</span></div>
+          <div class="strip-item"><strong>Restore as often as you like</strong><span>A restored parcel stays saved until you delete it.</span></div>
+          <div class="strip-item"><strong>Stored on your device</strong><span>URLs, titles, and parcel names never leave your browser.</span></div>
+        </div>
+      </div>
+
+      <section class="shell" id="how-it-works">
+        <p class="section-label">Zero organization required</p>
+        <h2>Stop deciding what every tab means.</h2>
+        <p class="section-lead">Tab Parcel is built for the moment you need to move on now—not after sorting, tagging, and tidying everything first.</p>
+        <div class="steps">
+          <article class="step"><span class="step-number">01</span><h3>Open</h3><p>Click the extension or use your keyboard shortcut. Your current tab count is ready.</p></article>
+          <article class="step"><span class="step-number">02</span><h3>Pack</h3><p>Name the parcel if it helps, or leave it blank. Press Enter and move on.</p></article>
+          <article class="step"><span class="step-number">03</span><h3>Restore</h3><p>Bring every saved tab back in its original order with one click—again and again.</p></article>
+        </div>
+      </section>
+
+      <section class="shell">
+        <div class="shortcut">
+          <div>
+            <p class="section-label">Built for the interruption</p>
+            <h2>Shortcut in. Clutter out.</h2>
+            <p>Press the shortcut, type an optional name, and hit Enter. The key combination is configurable in Chrome.</p>
+          </div>
+          <div class="key-flow" aria-label="Command Shift Y then Enter">
+            <kbd>⌘</kbd><span class="arrow">+</span><kbd>⇧ Y</kbd><span class="arrow">→</span><kbd class="enter">Enter</kbd>
+          </div>
+        </div>
+      </section>
+
+      <section class="shell safety-grid">
+        <div>
+          <p class="section-label">Safety before speed</p>
+          <h2>Your tabs close last.</h2>
+          <p class="section-lead">Packing is designed around one rule: the originals do not close until the parcel has been written and verified.</p>
+          <div class="promise">
+            <strong>All tab data stays locally in your browser.</strong>
+            <p>No account, analytics, ads, external API, or server. Tab Parcel requests only the Chrome permissions it needs.</p>
+          </div>
+        </div>
+        <div class="safety-flow" aria-label="Safe packing sequence">
+          <div class="safety-row"><span class="safety-check">1</span><div><strong>Collect restorable tabs</strong><span>Chrome internal pages are skipped without failing the entire parcel.</span></div></div>
+          <div class="safety-row"><span class="safety-check">2</span><div><strong>Save and read back</strong><span>The local write is verified before Tab Parcel moves forward.</span></div></div>
+          <div class="safety-row"><span class="safety-check">3</span><div><strong>Open a fresh New Tab</strong><span>Your Chrome window remains open and ready for the next thing.</span></div></div>
+          <div class="safety-row"><span class="safety-check">4</span><div><strong>Close the originals</strong><span>Only the successfully saved tabs are cleared from the window.</span></div></div>
+        </div>
+      </section>
+
+      <section class="shell uses">
+        <p class="section-label">One gesture, many handoffs</p>
+        <h2>Leave the context. Keep the context.</h2>
+        <div class="use-grid">
+          <article class="use"><span class="use-mark">↳</span><h3>The meeting starts now</h3><p>Park the research window you were deep in and switch to the call without sacrificing either.</p></article>
+          <article class="use"><span class="use-mark">↳</span><h3>Tomorrow’s problem</h3><p>Pack the unfinished task and reopen it when you actually have time to finish it.</p></article>
+          <article class="use"><span class="use-mark">↳</span><h3>Too many maybes</h3><p>Keep the comparison tabs without turning every temporary idea into a bookmark.</p></article>
+        </div>
+      </section>
+
+      <section class="shell cta">
+        <div class="cta-box">
+          <h2>Clear the window. Keep the work.</h2>
+          <p>Tab Parcel is free, lightweight, and intentionally simple. Install it before your next tab pileup.</p>
+          <a class="button" href="https://chromewebstore.google.com/detail/tab-parcel/pohjmphoidcblbneaeabbpjhcjjlbhke">Get Tab Parcel for Chrome <span aria-hidden="true">↗</span></a>
+        </div>
+      </section>
     </main>
+
+    <footer class="shell">
+      <span>© 2026 Tab Parcel. Made for clean handoffs.</span>
+      <div><a href="privacy.html">Privacy Policy</a><a href="mailto:kzmotk+dev@gmail.com">Contact</a></div>
+    </footer>
   </body>
 </html>
