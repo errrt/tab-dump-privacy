@@ -7,8 +7,10 @@
     <title>Tab Parcel — Pack now. Restore later.</title>
     <meta
       name="description"
-      content="Clear a crowded Chrome window in one move. Tab Parcel packs your tabs locally and restores them whenever you need them."
+      content="Clear a crowded Chrome window in one move, then optionally keep a private local timeline of your 20 most recent tab sets."
     />
+    <meta property="og:title" content="Tab Parcel — Pack now. Recover later." />
+    <meta property="og:description" content="Pack crowded Chrome windows and recover recent tab sets. No account, cloud, or tracking." />
     <link rel="icon" href="icon-128.png" />
     <style>
       :root {
@@ -197,6 +199,12 @@
       .shortcut-hint { display: flex; gap: 5px; align-items: center; justify-content: center; margin-top: 14px; color: var(--muted); font-size: 10px; }
       kbd { min-width: 24px; padding: 4px 6px; border: 1px solid #d8dae3; border-bottom-width: 2px; border-radius: 6px; background: #f7f7f9; color: var(--ink); font: inherit; font-weight: 750; text-align: center; }
 
+      .recovery-preview { margin-top: 14px; padding-top: 13px; border-top: 1px solid #e3e4eb; }
+      .recovery-preview-head { display: flex; align-items: center; justify-content: space-between; color: var(--ink); font-size: 10px; font-weight: 800; }
+      .recovery-preview-head span:last-child { padding: 3px 6px; border-radius: 999px; background: var(--brand-soft); color: var(--brand-dark); font-size: 8px; letter-spacing: .05em; }
+      .recovery-preview-row { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; padding: 8px 9px; border: 1px solid #e4e5eb; border-radius: 8px; background: #fafafd; color: var(--muted); font-size: 9px; }
+      .recovery-preview-row strong { color: var(--ink); font-size: 9px; }
+
       .strip { border-block: 1px solid var(--line); background: rgba(255, 254, 251, 0.56); }
       .strip-inner { display: grid; grid-template-columns: repeat(3, 1fr); }
       .strip-item { padding: 27px 28px; border-right: 1px solid var(--line); }
@@ -236,6 +244,24 @@
       .key-flow kbd { min-width: 74px; padding: 22px 17px; border: 1px solid #5e668b; border-bottom-width: 5px; border-radius: 14px; background: #293253; color: white; font-size: 21px; }
       .key-flow .arrow { color: #747d9d; font-size: 26px; }
       .key-flow .enter { border-color: #6d72e8; background: var(--brand); }
+
+      .recovery { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 72px; align-items: center; }
+      .recovery-copy .section-lead { max-width: 570px; }
+      .recovery-points { display: grid; gap: 13px; margin-top: 30px; }
+      .recovery-point { display: grid; grid-template-columns: 36px 1fr; gap: 13px; align-items: start; }
+      .recovery-point > span { display: grid; width: 36px; height: 36px; place-items: center; border-radius: 11px; background: var(--brand-soft); color: var(--brand-dark); font-weight: 900; }
+      .recovery-point strong { display: block; margin: 1px 0 3px; font-size: 15px; }
+      .recovery-point p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.55; }
+      .timeline-card { position: relative; padding: 30px; border: 1px solid #d5d7e1; border-radius: 26px; background: var(--white); box-shadow: var(--shadow); }
+      .timeline-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 23px; }
+      .timeline-head strong { font-size: 18px; }
+      .timeline-head span { padding: 6px 9px; border-radius: 999px; background: var(--mint); color: #145a3f; font-size: 10px; font-weight: 850; letter-spacing: .05em; text-transform: uppercase; }
+      .snapshot { display: grid; grid-template-columns: 12px 1fr auto; gap: 13px; align-items: center; padding: 16px 0; border-top: 1px solid #e7e5df; }
+      .snapshot-dot { width: 10px; height: 10px; border: 2px solid var(--brand); border-radius: 50%; background: var(--white); }
+      .snapshot strong { display: block; margin-bottom: 3px; font-size: 14px; }
+      .snapshot small { color: var(--muted); font-size: 11px; }
+      .snapshot button { padding: 7px 10px; border: 1px solid #d8d9e4; border-radius: 8px; background: white; color: var(--brand-dark); font: inherit; font-size: 10px; font-weight: 800; }
+      .timeline-note { margin: 18px 0 0; color: var(--muted); font-size: 11px; line-height: 1.5; }
 
       .safety-grid { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 80px; align-items: start; }
       .promise { padding: 29px; border: 1px solid #b9e3d0; border-radius: 22px; background: var(--mint); }
@@ -277,7 +303,7 @@
         .steps, .strip-inner { grid-template-columns: 1fr; }
         .strip-item, .strip-item:first-child { padding: 22px 0; border-right: 0; border-bottom: 1px solid var(--line); }
         .strip-item:last-child { border-bottom: 0; }
-        .shortcut, .safety-grid { grid-template-columns: 1fr; }
+        .shortcut, .recovery, .safety-grid { grid-template-columns: 1fr; }
         .use-grid { grid-template-columns: 1fr 1fr; }
         .use:first-child { grid-column: span 2; }
       }
@@ -326,9 +352,9 @@
     <main id="top">
       <div class="shell hero">
         <div class="hero-copy">
-          <p class="eyebrow">A clean slate in one move</p>
-          <h1>Your tabs need a parking spot, <span>not a filing system.</span></h1>
-          <p>Pack every tab in your current Chrome window, get back to a blank workspace, and restore the whole set whenever you need it.</p>
+          <p class="eyebrow">New in v0.3 · Private recovery</p>
+          <h1>Your tabs need a safety net, <span>not a filing system.</span></h1>
+          <p>Pack every tab in your current Chrome window, get back to a blank workspace, and optionally recover recent tab sets from a private local timeline.</p>
           <div class="hero-actions">
             <a class="button" href="https://chromewebstore.google.com/detail/tab-parcel/pohjmphoidcblbneaeabbpjhcjjlbhke">Add to Chrome — it’s free <span aria-hidden="true">↗</span></a>
             <a class="button secondary" href="#how-it-works">See how it works</a>
@@ -356,6 +382,11 @@
               <div class="fake-input">Name this parcel (optional)</div>
               <div class="fake-button">Pack 24 tabs</div>
               <div class="shortcut-hint"><kbd>⌘</kbd><kbd>⇧</kbd><kbd>Y</kbd><span>then</span><kbd>Enter</kbd></div>
+              <div class="recovery-preview">
+                <div class="recovery-preview-head"><span>Recovery</span><span>ON · LOCAL</span></div>
+                <div class="recovery-preview-row"><strong>12 tabs</strong><span>just now</span></div>
+                <div class="recovery-preview-row"><strong>9 tabs</strong><span>18 min ago</span></div>
+              </div>
             </div>
           </div>
         </div>
@@ -364,7 +395,7 @@
       <div class="strip">
         <div class="shell strip-inner">
           <div class="strip-item"><strong>Current window only</strong><span>Switch context without touching your other Chrome windows.</span></div>
-          <div class="strip-item"><strong>Restore as often as you like</strong><span>A restored parcel stays saved until you delete it.</span></div>
+          <div class="strip-item"><strong>Recovery stays optional</strong><span>Turn it on only when you want a local timeline of recent tab changes.</span></div>
           <div class="strip-item"><strong>Stored on your device</strong><span>URLs, titles, and parcel names never leave your browser.</span></div>
         </div>
       </div>
@@ -377,6 +408,26 @@
           <article class="step"><span class="step-number">01</span><h3>Open</h3><p>Click the extension or use your keyboard shortcut. Your current tab count is ready.</p></article>
           <article class="step"><span class="step-number">02</span><h3>Pack</h3><p>Name the parcel if it helps, or leave it blank. Press Enter and move on.</p></article>
           <article class="step"><span class="step-number">03</span><h3>Restore</h3><p>Bring every saved tab back in its original order with one click—again and again.</p></article>
+        </div>
+      </section>
+
+      <section class="shell recovery" id="recovery">
+        <div class="recovery-copy">
+          <p class="section-label">Recovery, without surveillance</p>
+          <h2>Go back to a recent tab set.</h2>
+          <p class="section-lead">Turn on Recovery to keep a private timeline of recent tab changes. If a window disappears—or you simply want yesterday's context back—restore it in one click.</p>
+          <div class="recovery-points">
+            <div class="recovery-point"><span>✓</span><div><strong>Off by default</strong><p>You decide whether automatic snapshots are created.</p></div></div>
+            <div class="recovery-point"><span>20</span><div><strong>Twenty recent snapshots</strong><p>Enough history to recover context without building another archive to manage.</p></div></div>
+            <div class="recovery-point"><span>⌂</span><div><strong>Local only</strong><p>URLs and titles stay in Chrome storage on your device.</p></div></div>
+          </div>
+        </div>
+        <div class="timeline-card" aria-label="Example Recovery timeline">
+          <div class="timeline-head"><strong>Recovery</strong><span>On · local</span></div>
+          <div class="snapshot"><i class="snapshot-dot"></i><div><strong>12 tabs</strong><small>Today, 10:42 · Current research</small></div><button type="button" tabindex="-1">Restore</button></div>
+          <div class="snapshot"><i class="snapshot-dot"></i><div><strong>9 tabs</strong><small>Today, 10:24 · Before the meeting</small></div><button type="button" tabindex="-1">Restore</button></div>
+          <div class="snapshot"><i class="snapshot-dot"></i><div><strong>17 tabs</strong><small>Yesterday, 18:06 · End of day</small></div><button type="button" tabindex="-1">Restore</button></div>
+          <p class="timeline-note">Illustrative timeline. Snapshots are created from restorable tabs and never leave your browser.</p>
         </div>
       </section>
 
@@ -423,8 +474,8 @@
 
       <section class="shell cta">
         <div class="cta-box">
-          <h2>Clear the window. Keep the work.</h2>
-          <p>Tab Parcel is free, lightweight, and intentionally simple. Install it before your next tab pileup.</p>
+          <h2>Clear the window. Keep the work. Recover the context.</h2>
+          <p>Tab Parcel is free, lightweight, and intentionally private. Install it before your next tab pileup.</p>
           <a class="button" href="https://chromewebstore.google.com/detail/tab-parcel/pohjmphoidcblbneaeabbpjhcjjlbhke">Get Tab Parcel for Chrome <span aria-hidden="true">↗</span></a>
         </div>
       </section>
